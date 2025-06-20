@@ -1,0 +1,80 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.drawing-area {
+  flex: 1;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.konvajs-content {
+  background-color: white;
+}
+
+.toolbar-container {
+  display: flex;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+  gap: 10px;
+  align-items: center;
+  height: 60px;
+}
+
+.tool-group {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  border-right: 1px solid #ddd;
+  padding-right: 10px;
+  margin-right: 10px;
+}
+
+.tool-group:last-child {
+  border-right: none;
+}
+
+.tool-button {
+  padding: 8px 12px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.tool-button:hover {
+  background-color: #f5f5f5;
+}
+
+.tool-button.active {
+  background-color: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+.color-picker {
+  width: 30px;
+  height: 30px;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.stroke-width-control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stroke-width-control input {
+  width: 60px;
+}
