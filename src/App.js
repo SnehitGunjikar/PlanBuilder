@@ -1,22 +1,58 @@
 import React, { useState, useRef } from 'react';
-import { Stage, Layer, Line, Text, Rect } from 'react-konva';
+import { Stage, Layer, Line, Text, Rect, Circle, RegularPolygon, Transformer } from 'react-konva';
 import Toolbar from './components/Toolbar';
 import './App.css';
+
+// Database model for storing drawing details
+// This is a simple in-memory model, but could be replaced with a real database
+const DrawingDatabase = {
+  saveDrawing: (drawingData) => {
+    localStorage.setItem('buildingPlannerDrawing', JSON.stringify(drawingData));
+    return true;
+  },
+  loadDrawing: () => {
+    const data = localStorage.getItem('buildingPlannerDrawing');
+    return data ? JSON.parse(data) : null;
+  }
+};
 
 const App = () => {
   // State for managing the current tool
   const [tool, setTool] = useState('line');
-  const [lines, setLines] = useState([]);
+  const [shapes, setShapes] = useState([]);
   const [annotations, setAnnotations] = useState([]);
-  const [currentLine, setCurrentLine] = useState(null);
+  const [currentShape, setCurrentShape] = useState(null);
   const [currentAnnotation, setCurrentAnnotation] = useState(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState('#000000');
   const [strokeWidth, setStrokeWidth] = useState(2);
+  const [showAnnotations, setShowAnnotations] = useState(true);
+  const [selectedId, setSelectedId] = useState(null);
   const stageRef = useRef(null);
+  const transformerRef = useRef(null);
+
+  // Handle selection of shapes
+  React.useEffect(() => {
+    if (selectedId && transformerRef.current) {
+      // Find the selected shape node
+      const selectedNode = stageRef.current.findOne('#' + selectedId);
+      if (selectedNode) {
+        transformerRef.current.nodes([selectedNode]);
+        transformerRef.current.getLayer().batchDraw();
+      }
+    } else if (transformerRef.current) {
+      transformerRef.current.nodes([]);
+      transformerRef.current.getLayer().batchDraw();
+    }
+  }, [selectedId]);
 
   // Handle mouse down event
   const handleMouseDown = (e) => {
+    // Deselect when clicking on the stage background
+    if (e.target === e.target.getStage()) {
+      setSelectedId(null);
+    }
+    
     if (tool === 'select') return;
     
     const pos = e.target.getStage().getPointerPosition();
@@ -29,8 +65,9 @@ const App = () => {
         points: [pos.x, pos.y, pos.x, pos.y],
         color,
         strokeWidth,
+        draggable: true,
       };
-      setCurrentLine(newLine);
+      setCurrentShape(newLine);
     } else if (tool === 'rect') {
       const newRect = {
         id: Date.now(),
@@ -41,8 +78,34 @@ const App = () => {
         height: 0,
         color,
         strokeWidth,
+        draggable: true,
       };
-      setCurrentLine(newRect);
+      setCurrentShape(newRect);
+    } else if (tool === 'circle') {
+      const newCircle = {
+        id: Date.now(),
+        tool,
+        x: pos.x,
+        y: pos.y,
+        radius: 0,
+        color,
+        strokeWidth,
+        draggable: true,
+      };
+      setCurrentShape(newCircle);
+    } else if (tool === 'triangle') {
+      const newTriangle = {
+        id: Date.now(),
+        tool,
+        x: pos.x,
+        y: pos.y,
+        sides: 3,
+        radius: 0,
+        color,
+        strokeWidth,
+        draggable: true,
+      };
+      setCurrentShape(newTriangle);
     } else if (tool === 'annotate') {
       // Start creating an annotation
       const newAnnotation = {
@@ -66,19 +129,37 @@ const App = () => {
     
     const pos = e.target.getStage().getPointerPosition();
     
-    if (tool === 'line' && currentLine) {
+    if (tool === 'line' && currentShape) {
       const updatedLine = {
-        ...currentLine,
-        points: [currentLine.points[0], currentLine.points[1], pos.x, pos.y],
+        ...currentShape,
+        points: [currentShape.points[0], currentShape.points[1], pos.x, pos.y],
       };
-      setCurrentLine(updatedLine);
-    } else if (tool === 'rect' && currentLine) {
+      setCurrentShape(updatedLine);
+    } else if (tool === 'rect' && currentShape) {
       const updatedRect = {
-        ...currentLine,
-        width: pos.x - currentLine.x,
-        height: pos.y - currentLine.y,
+        ...currentShape,
+        width: pos.x - currentShape.x,
+        height: pos.y - currentShape.y,
       };
-      setCurrentLine(updatedRect);
+      setCurrentShape(updatedRect);
+    } else if (tool === 'circle' && currentShape) {
+      const dx = pos.x - currentShape.x;
+      const dy = pos.y - currentShape.y;
+      const radius = Math.sqrt(dx * dx + dy * dy);
+      const updatedCircle = {
+        ...currentShape,
+        radius: radius,
+      };
+      setCurrentShape(updatedCircle);
+    } else if (tool === 'triangle' && currentShape) {
+      const dx = pos.x - currentShape.x;
+      const dy = pos.y - currentShape.y;
+      const radius = Math.sqrt(dx * dx + dy * dy);
+      const updatedTriangle = {
+        ...currentShape,
+        radius: radius,
+      };
+      setCurrentShape(updatedTriangle);
     } else if (tool === 'annotate' && currentAnnotation) {
       const updatedAnnotation = {
         ...currentAnnotation,
@@ -94,9 +175,9 @@ const App = () => {
     if (!isDrawing) return;
     setIsDrawing(false);
     
-    if (currentLine) {
-      setLines([...lines, currentLine]);
-      setCurrentLine(null);
+    if (currentShape) {
+      setShapes([...shapes, currentShape]);
+      setCurrentShape(null);
     }
     
     if (currentAnnotation) {
@@ -121,33 +202,146 @@ const App = () => {
 
   // Clear the canvas
   const handleClear = () => {
-    setLines([]);
+    setShapes([]);
     setAnnotations([]);
+    setSelectedId(null);
   };
 
-  // Render the current line being drawn
-  const renderCurrentLine = () => {
-    if (!currentLine) return null;
+  // Save the current drawing
+  const handleSave = () => {
+    const drawingData = {
+      shapes,
+      annotations,
+    };
+    DrawingDatabase.saveDrawing(drawingData);
+    alert('Drawing saved successfully!');
+  };
+
+  // Load a saved drawing
+  const handleLoad = () => {
+    const drawingData = DrawingDatabase.loadDrawing();
+    if (drawingData) {
+      setShapes(drawingData.shapes || []);
+      setAnnotations(drawingData.annotations || []);
+      alert('Drawing loaded successfully!');
+    } else {
+      alert('No saved drawing found.');
+    }
+  };
+
+  // Toggle annotations visibility
+  const toggleAnnotations = () => {
+    setShowAnnotations(!showAnnotations);
+  };
+
+  // Handle shape selection
+  const handleShapeClick = (e) => {
+    if (tool !== 'select') return;
     
-    if (currentLine.tool === 'line') {
+    // Prevent deselection when clicking on a transformer
+    if (e.target.getParent().className === 'Transformer') {
+      return;
+    }
+    
+    const clickedOnTransformer = e.target.getParent().className === 'Transformer';
+    const clickedOnShape = e.target.id() !== '';
+    
+    if (clickedOnShape && !clickedOnTransformer) {
+      setSelectedId(e.target.id());
+    } else {
+      setSelectedId(null);
+    }
+  };
+
+  // Handle shape transform
+  const handleTransformEnd = (e) => {
+    // Update the shape with new properties after transformation
+    const node = e.target;
+    const shapeId = node.id();
+    
+    const updatedShapes = shapes.map(shape => {
+      if (shape.id.toString() === shapeId) {
+        // Get the new properties from the node
+        return {
+          ...shape,
+          x: node.x(),
+          y: node.y(),
+          width: node.width() * node.scaleX(),
+          height: node.height() * node.scaleY(),
+          rotation: node.rotation(),
+          // Reset scale to avoid double scaling
+          scaleX: 1,
+          scaleY: 1
+        };
+      }
+      return shape;
+    });
+    
+    setShapes(updatedShapes);
+  };
+
+  // Handle shape drag end
+  const handleDragEnd = (e) => {
+    const id = e.target.id();
+    const updatedShapes = shapes.map(shape => {
+      if (shape.id.toString() === id) {
+        return {
+          ...shape,
+          x: e.target.x(),
+          y: e.target.y()
+        };
+      }
+      return shape;
+    });
+    setShapes(updatedShapes);
+  };
+
+  // Render the current shape being drawn
+  const renderCurrentShape = () => {
+    if (!currentShape) return null;
+    
+    if (currentShape.tool === 'line') {
       return (
         <Line
-          points={currentLine.points}
-          stroke={currentLine.color}
-          strokeWidth={currentLine.strokeWidth}
+          points={currentShape.points}
+          stroke={currentShape.color}
+          strokeWidth={currentShape.strokeWidth}
           tension={0}
           lineCap="round"
         />
       );
-    } else if (currentLine.tool === 'rect') {
+    } else if (currentShape.tool === 'rect') {
       return (
         <Rect
-          x={currentLine.x}
-          y={currentLine.y}
-          width={currentLine.width}
-          height={currentLine.height}
-          stroke={currentLine.color}
-          strokeWidth={currentLine.strokeWidth}
+          x={currentShape.x}
+          y={currentShape.y}
+          width={currentShape.width}
+          height={currentShape.height}
+          stroke={currentShape.color}
+          strokeWidth={currentShape.strokeWidth}
+          fill="transparent"
+        />
+      );
+    } else if (currentShape.tool === 'circle') {
+      return (
+        <Circle
+          x={currentShape.x}
+          y={currentShape.y}
+          radius={currentShape.radius}
+          stroke={currentShape.color}
+          strokeWidth={currentShape.strokeWidth}
+          fill="transparent"
+        />
+      );
+    } else if (currentShape.tool === 'triangle') {
+      return (
+        <RegularPolygon
+          x={currentShape.x}
+          y={currentShape.y}
+          sides={3}
+          radius={currentShape.radius}
+          stroke={currentShape.color}
+          strokeWidth={currentShape.strokeWidth}
           fill="transparent"
         />
       );
@@ -182,6 +376,10 @@ const App = () => {
         strokeWidth={strokeWidth}
         setStrokeWidth={setStrokeWidth}
         onClear={handleClear}
+        onSave={handleSave}
+        onLoad={handleLoad}
+        showAnnotations={showAnnotations}
+        onToggleAnnotations={toggleAnnotations}
       />
       <div className="drawing-area">
         <Stage
@@ -190,6 +388,7 @@ const App = () => {
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
+          onClick={handleShapeClick}
           ref={stageRef}
         >
           <Layer>
@@ -211,38 +410,78 @@ const App = () => {
               />
             ))}
             
-            {/* Render all completed lines */}
-            {lines.map((line) => {
-              if (line.tool === 'line') {
+            {/* Render all completed shapes */}
+            {shapes.map((shape) => {
+              if (shape.tool === 'line') {
                 return (
                   <Line
-                    key={line.id}
-                    points={line.points}
-                    stroke={line.color}
-                    strokeWidth={line.strokeWidth}
+                    key={shape.id}
+                    id={shape.id.toString()}
+                    points={shape.points}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth}
                     tension={0}
                     lineCap="round"
+                    draggable={tool === 'select'}
+                    onDragEnd={handleDragEnd}
                   />
                 );
-              } else if (line.tool === 'rect') {
+              } else if (shape.tool === 'rect') {
                 return (
                   <Rect
-                    key={line.id}
-                    x={line.x}
-                    y={line.y}
-                    width={line.width}
-                    height={line.height}
-                    stroke={line.color}
-                    strokeWidth={line.strokeWidth}
+                    key={shape.id}
+                    id={shape.id.toString()}
+                    x={shape.x}
+                    y={shape.y}
+                    width={shape.width}
+                    height={shape.height}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth}
                     fill="transparent"
+                    draggable={tool === 'select'}
+                    onDragEnd={handleDragEnd}
+                    onTransformEnd={handleTransformEnd}
+                  />
+                );
+              } else if (shape.tool === 'circle') {
+                return (
+                  <Circle
+                    key={shape.id}
+                    id={shape.id.toString()}
+                    x={shape.x}
+                    y={shape.y}
+                    radius={shape.radius}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth}
+                    fill="transparent"
+                    draggable={tool === 'select'}
+                    onDragEnd={handleDragEnd}
+                    onTransformEnd={handleTransformEnd}
+                  />
+                );
+              } else if (shape.tool === 'triangle') {
+                return (
+                  <RegularPolygon
+                    key={shape.id}
+                    id={shape.id.toString()}
+                    x={shape.x}
+                    y={shape.y}
+                    sides={3}
+                    radius={shape.radius}
+                    stroke={shape.color}
+                    strokeWidth={shape.strokeWidth}
+                    fill="transparent"
+                    draggable={tool === 'select'}
+                    onDragEnd={handleDragEnd}
+                    onTransformEnd={handleTransformEnd}
                   />
                 );
               }
               return null;
             })}
             
-            {/* Render all annotations */}
-            {annotations.map((annotation) => (
+            {/* Render all annotations if showAnnotations is true */}
+            {showAnnotations && annotations.map((annotation) => (
               <React.Fragment key={annotation.id}>
                 <Line
                   points={annotation.points}
@@ -263,9 +502,21 @@ const App = () => {
               </React.Fragment>
             ))}
             
-            {/* Render the current line being drawn */}
-            {renderCurrentLine()}
+            {/* Render the current shape being drawn */}
+            {renderCurrentShape()}
             {renderCurrentAnnotation()}
+            
+            {/* Transformer for selected shapes */}
+            <Transformer
+              ref={transformerRef}
+              boundBoxFunc={(oldBox, newBox) => {
+                // Limit minimum size
+                if (newBox.width < 5 || newBox.height < 5) {
+                  return oldBox;
+                }
+                return newBox;
+              }}
+            />
           </Layer>
         </Stage>
       </div>

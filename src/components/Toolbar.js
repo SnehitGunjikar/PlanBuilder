@@ -1,6 +1,18 @@
 import React from 'react';
 
-const Toolbar = ({ tool, setTool, color, setColor, strokeWidth, setStrokeWidth, onClear }) => {
+const Toolbar = ({ 
+  tool, 
+  setTool, 
+  color, 
+  setColor, 
+  strokeWidth, 
+  setStrokeWidth, 
+  onClear, 
+  onSave, 
+  onLoad, 
+  showAnnotations, 
+  onToggleAnnotations 
+}) => {
   return (
     <div className="toolbar-container">
       <div className="tool-group">
@@ -17,6 +29,20 @@ const Toolbar = ({ tool, setTool, color, setColor, strokeWidth, setStrokeWidth, 
           title="Rectangle Tool"
         >
           Rectangle
+        </button>
+        <button
+          className={`tool-button ${tool === 'circle' ? 'active' : ''}`}
+          onClick={() => setTool('circle')}
+          title="Circle Tool"
+        >
+          Circle
+        </button>
+        <button
+          className={`tool-button ${tool === 'triangle' ? 'active' : ''}`}
+          onClick={() => setTool('triangle')}
+          title="Triangle Tool"
+        >
+          Triangle
         </button>
         <button
           className={`tool-button ${tool === 'annotate' ? 'active' : ''}`}
@@ -59,6 +85,30 @@ const Toolbar = ({ tool, setTool, color, setColor, strokeWidth, setStrokeWidth, 
       </div>
       
       <div className="tool-group">
+        <button
+          className={`tool-button ${!showAnnotations ? 'active' : ''}`}
+          onClick={onToggleAnnotations}
+          title="Toggle Annotations Visibility"
+        >
+          {showAnnotations ? 'Hide Annotations' : 'Show Annotations'}
+        </button>
+      </div>
+      
+      <div className="tool-group">
+        <button
+          className="tool-button"
+          onClick={onSave}
+          title="Save Drawing"
+        >
+          Save
+        </button>
+        <button
+          className="tool-button"
+          onClick={onLoad}
+          title="Load Drawing"
+        >
+          Load
+        </button>
         <button
           className="tool-button"
           onClick={onClear}
