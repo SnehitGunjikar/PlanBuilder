@@ -135,6 +135,34 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 - Snehit - Initial work and development
 
+## 📸 Implementation Screenshots
+
+### Header and Toolbar
+The application features a modern, gradient-styled header with an intuitive toolbar containing drawing tools and controls.
+
+![Header and Toolbar](./screenshots/header-toolbar.png)
+*Screenshot shows the application header with logo and the toolbar with drawing tools.*
+
+### Drawing Canvas
+The main drawing area provides a grid background for precise drawing and supports various shapes and annotations.
+
+![Drawing Canvas](./screenshots/drawing-canvas.png)
+*Screenshot shows the drawing canvas with sample shapes and measurements.*
+
+### Shape Selection and Transformation
+Users can select shapes and transform them using the built-in handles.
+
+![Shape Transformation](./screenshots/shape-transform.png)
+*Screenshot demonstrates selecting and transforming a rectangle shape.*
+
+### Annotation Tools
+The measurement tool allows adding dimension annotations to the drawing.
+
+![Annotations](./screenshots/annotations.png)
+*Screenshot shows dimension annotations on a sample floor plan.*
+
+> **Note:** To add actual screenshots, create a `screenshots` folder in the project root and add your images with the filenames referenced above.
+
 ## 🙏 Acknowledgments
 
 - [React](https://reactjs.org/) - JavaScript library for building user interfaces
