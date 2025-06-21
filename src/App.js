@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Stage, Layer, Line, Text, Rect, Circle, RegularPolygon, Transformer } from 'react-konva';
 import Toolbar from './components/Toolbar';
+import Header from './components/Header';
 import './App.css';
 
 // Database model for storing drawing details
@@ -368,6 +369,7 @@ const App = () => {
 
   return (
     <div className="app-container">
+      <Header />
       <Toolbar
         tool={tool}
         setTool={setTool}
@@ -384,7 +386,7 @@ const App = () => {
       <div className="drawing-area">
         <Stage
           width={window.innerWidth}
-          height={window.innerHeight - 60}
+          height={window.innerHeight - 120} 
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}

@@ -21,42 +21,48 @@ const Toolbar = ({
           onClick={() => setTool('line')}
           title="Line Tool"
         >
-          Line
+          <span className="tool-icon">━</span>
+          <span className="tool-label">Line</span>
         </button>
         <button
           className={`tool-button ${tool === 'rect' ? 'active' : ''}`}
           onClick={() => setTool('rect')}
           title="Rectangle Tool"
         >
-          Rectangle
+          <span className="tool-icon">□</span>
+          <span className="tool-label">Rectangle</span>
         </button>
         <button
           className={`tool-button ${tool === 'circle' ? 'active' : ''}`}
           onClick={() => setTool('circle')}
           title="Circle Tool"
         >
-          Circle
+          <span className="tool-icon">○</span>
+          <span className="tool-label">Circle</span>
         </button>
         <button
           className={`tool-button ${tool === 'triangle' ? 'active' : ''}`}
           onClick={() => setTool('triangle')}
           title="Triangle Tool"
         >
-          Triangle
+          <span className="tool-icon">△</span>
+          <span className="tool-label">Triangle</span>
         </button>
         <button
           className={`tool-button ${tool === 'annotate' ? 'active' : ''}`}
           onClick={() => setTool('annotate')}
           title="Annotation Tool"
         >
-          Measure
+          <span className="tool-icon">📏</span>
+          <span className="tool-label">Measure</span>
         </button>
         <button
           className={`tool-button ${tool === 'select' ? 'active' : ''}`}
           onClick={() => setTool('select')}
           title="Select Tool"
         >
-          Select
+          <span className="tool-icon">✓</span>
+          <span className="tool-label">Select</span>
         </button>
       </div>
       
@@ -90,7 +96,8 @@ const Toolbar = ({
           onClick={onToggleAnnotations}
           title="Toggle Annotations Visibility"
         >
-          {showAnnotations ? 'Hide Annotations' : 'Show Annotations'}
+          <span className="tool-icon">{showAnnotations ? '👁️' : '👁️‍🗨️'}</span>
+          <span className="tool-label">{showAnnotations ? 'Hide Annotations' : 'Show Annotations'}</span>
         </button>
       </div>
       
@@ -100,21 +107,24 @@ const Toolbar = ({
           onClick={onSave}
           title="Save Drawing"
         >
-          Save
+          <span className="tool-icon">💾</span>
+          <span className="tool-label">Save</span>
         </button>
         <button
           className="tool-button"
           onClick={onLoad}
           title="Load Drawing"
         >
-          Load
+          <span className="tool-icon">📂</span>
+          <span className="tool-label">Load</span>
         </button>
         <button
           className="tool-button"
           onClick={onClear}
           title="Clear Canvas"
         >
-          Clear All
+          <span className="tool-icon">🗑️</span>
+          <span className="tool-label">Clear</span>
         </button>
       </div>
     </div>

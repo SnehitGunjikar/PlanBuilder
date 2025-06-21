@@ -4,12 +4,14 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .drawing-area {
   flex: 1;
   background-color: #f9f9f9;
   overflow: hidden;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .konvajs-content {
@@ -18,21 +20,22 @@
 
 .toolbar-container {
   display: flex;
-  padding: 10px;
-  background-color: #f0f0f0;
-  border-bottom: 1px solid #ddd;
-  gap: 10px;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  gap: 15px;
   align-items: center;
   height: 60px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .tool-group {
   display: flex;
-  gap: 5px;
+  gap: 8px;
   align-items: center;
-  border-right: 1px solid #ddd;
-  padding-right: 10px;
-  margin-right: 10px;
+  border-right: 1px solid #e9ecef;
+  padding-right: 15px;
+  margin-right: 15px;
 }
 
 .tool-group:last-child {
@@ -42,39 +45,81 @@
 .tool-button {
   padding: 8px 12px;
   background-color: white;
-  border: 1px solid #ccc;
+  border: 1px solid #dee2e6;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
   font-size: 14px;
 }
 
-.tool-button:hover {
-  background-color: #f5f5f5;
+.tool-icon {
+  font-size: 16px;
+  margin-right: 6px;
+  display: inline-block;
+}
+
+.tool-label {
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .tool-label {
+    display: none;
+  }
+  
+  .tool-icon {
+    margin-right: 0;
+    font-size: 18px;
+  }
+  
+  .tool-button {
+    padding: 8px;
+  }
 }
 
 .tool-button.active {
   background-color: #e6f7ff;
   border-color: #1890ff;
   color: #1890ff;
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.tool-button:hover {
+  background-color: #f5f5f5;
+  border-color: #bfbfbf;
+  transform: translateY(-1px);
 }
 
 .color-picker {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: none;
   padding: 0;
   cursor: pointer;
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.color-picker:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
 }
 
 .stroke-width-control {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 }
 
 .stroke-width-control input {
-  width: 60px;
+  width: 70px;
+  padding: 4px 8px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  font-size: 14px;
 }
