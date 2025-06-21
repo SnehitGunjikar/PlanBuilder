@@ -1,102 +1,142 @@
 # Building Planner
 
-A web application that allows users to select, draw, and annotate building plans. This application provides a simple and minimal interface with drawing tools for creating building plans and adding annotations for dimensions.
+![Building Planner](https://img.shields.io/badge/Building-Planner-blue)
+![Version](https://img.shields.io/badge/version-0.1.0-green)
+![React](https://img.shields.io/badge/React-18.2.0-61DAFB)
+![License](https://img.shields.io/badge/license-MIT-yellow)
 
-## Features
+A professional web application for creating, editing, and annotating building plans. Building Planner provides an intuitive interface with powerful drawing tools for architects, designers, and construction professionals to create detailed building plans with precise measurements and annotations.
 
-- **Drawing Tools**: Create lines, rectangles, circles, and triangles
+## 🌟 Features
+
+### Drawing Tools
+- **Line Tool**: Create straight lines for walls, boundaries, and connections
+- **Rectangle Tool**: Draw rectangular shapes for rooms, furniture, and structures
+- **Circle Tool**: Add circular elements like columns, tables, or design features
+- **Triangle Tool**: Create triangular shapes for roofs, decorative elements, or custom structures
+
+### Measurement & Annotation
 - **Measurement Tool**: Add dimension annotations with automatic measurements
-- **Selection Tool**: Move, resize, and transform drawn shapes
-- **View Tool**: Show or hide annotations
-- **Customization**: Change colors and stroke width
-- **Storage**: Save and load drawings using local storage
+- **Annotation Visibility**: Toggle visibility of all measurements and annotations
+- **Custom Styling**: Adjust color and thickness of annotation lines
+
+### Selection & Manipulation
+- **Select Tool**: Click on any shape to select it
+- **Move**: Drag selected shapes to reposition them
+- **Resize**: Use transform handles to resize selected shapes
+- **Transform**: Rotate and scale elements as needed
+
+### Customization
+- **Color Picker**: Choose from any color for your drawing elements
+- **Stroke Width**: Adjust line thickness for different elements
 - **Grid Background**: Precise drawing with grid alignment
-- **Clear Canvas**: Reset the drawing area
 
-## Technologies Used
+### Project Management
+- **Save**: Store your current drawing in local storage
+- **Load**: Retrieve previously saved drawings
+- **Clear Canvas**: Reset the drawing area when starting a new project
 
-- **React.js** - Frontend framework
-- **Konva.js** - Canvas drawing library
-- **React-Konva** - React integration for Konva
-- **LocalStorage API** - For saving and loading drawings
-
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js (v14 or higher)
-- npm or yarn
+- npm or yarn package manager
 
 ### Installation
 
 1. Clone the repository
-2. Install dependencies:
+   ```bash
+   git clone https://github.com/yourusername/building-planner.git
+   cd building-planner
    ```
+
+2. Install dependencies
+   ```bash
    npm install
-   ```
-   or
-   ```
+   # or
    yarn install
    ```
 
-### Running the Application
+3. Start the development server
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
+
+4. Open your browser and navigate to `http://localhost:3000`
+
+## 💻 Usage Guide
+
+### Basic Drawing
+
+1. **Select a Tool**: Click on any drawing tool from the toolbar (Line, Rectangle, Circle, Triangle)
+2. **Start Drawing**: Click and drag on the canvas to create your shape
+3. **Customize**: Use the color picker and stroke width controls to adjust appearance
+
+### Working with Annotations
+
+1. **Add Measurements**: Select the Measure tool and click-drag between points
+2. **Toggle Visibility**: Use the Show/Hide Annotations button to control visibility
+
+### Managing Shapes
+
+1. **Select**: Click the Select tool, then click on any shape
+2. **Transform**: Use the handles to resize or rotate the selected shape
+3. **Move**: Drag the selected shape to a new position
+
+### Saving Your Work
+
+1. **Save**: Click the Save button to store your current drawing
+2. **Load**: Click the Load button to retrieve your last saved drawing
+3. **Clear**: Use the Clear button to reset the canvas
+
+## 🛠️ Technologies Used
+
+- **React.js** - Frontend framework for building the user interface
+- **Konva.js** - Canvas library for drawing and manipulating shapes
+- **React-Konva** - React integration for Konva.js
+- **LocalStorage API** - For saving and loading drawings
+
+## 📋 Project Structure
 
 ```
-npm start
-```
-or
-```
-yarn start
-```
-
-The application will be available at http://localhost:3000
-
-## Usage
-
-1. Select a drawing tool from the toolbar (Line, Rectangle, Circle, Triangle, Measure, or Select)
-2. Click and drag on the canvas to draw
-3. Use the Measure tool to create dimension annotations
-4. Use the Select tool to move, resize, or transform shapes
-5. Toggle annotation visibility with the Show/Hide Annotations button
-6. Customize the color and stroke width using the toolbar controls
-7. Save your drawing using the Save button
-8. Load a previously saved drawing using the Load button
-9. Clear the canvas using the Clear All button
-
-## Project Structure
-
-```
-├── public/             # Public assets
-├── src/                # Source files
-│   ├── components/     # React components
-│   │   └── Toolbar.js  # Drawing toolbar component
-│   ├── App.js          # Main application component
-│   ├── App.css         # Application styles
-│   ├── index.js        # Entry point
-│   └── index.css       # Global styles
-└── package.json        # Project dependencies
+building-planner/
+├── public/                # Public assets
+├── src/                   # Source files
+│   ├── components/        # React components
+│   │   ├── Header.js      # Application header
+│   │   ├── Header.css     # Header styles
+│   │   └── Toolbar.js     # Drawing toolbar
+│   ├── App.js             # Main application component
+│   ├── App.css            # Application styles
+│   ├── index.js           # Entry point
+│   └── index.css          # Global styles
+├── package.json           # Dependencies and scripts
+└── README.md              # Project documentation
 ```
 
-## Database Model
+## 🔄 Future Enhancements
 
-The application uses a simple database model to store drawing details:
+- Export drawings as PNG, SVG, or PDF
+- User accounts and cloud storage for drawings
+- Collaborative editing features
+- Predefined templates for common building layouts
+- Layer management for complex drawings
+- Snap-to-grid functionality for precise placement
+- Undo/redo functionality
 
-```javascript
-const DrawingDatabase = {
-  saveDrawing: (drawingData) => {
-    localStorage.setItem('buildingPlannerDrawing', JSON.stringify(drawingData));
-    return true;
-  },
-  loadDrawing: () => {
-    const data = localStorage.getItem('buildingPlannerDrawing');
-    return data ? JSON.parse(data) : null;
-  }
-};
-```
+## 📝 License
 
-This model uses the browser's localStorage API to persist drawing data. The data structure includes:
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-- **shapes**: Array of all drawn shapes with their properties (type, position, size, color, etc.)
-- **annotations**: Array of all measurement annotations with their properties
+## 👥 Contributors
 
-For a production application, this could be replaced with a server-side database like MongoDB or PostgreSQL.
+- Snehit - Initial work and development
+
+## 🙏 Acknowledgments
+
+- [React](https://reactjs.org/) - JavaScript library for building user interfaces
+- [Konva.js](https://konvajs.org/) - HTML5 Canvas JavaScript framework
+- [React-Konva](https://github.com/konvajs/react-konva) - React binding to canvas element via Konva
