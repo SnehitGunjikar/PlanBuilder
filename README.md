@@ -104,6 +104,7 @@ A professional web application for creating, editing, and annotating building pl
 ```
 building-planner/
 ├── public/                # Public assets
+├── screenshots            # Screenshots file
 ├── src/                   # Source files
 │   ├── components/        # React components
 │   │   ├── Header.js      # Application header
