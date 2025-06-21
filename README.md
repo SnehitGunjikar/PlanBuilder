@@ -161,7 +161,7 @@ The measurement tool allows adding dimension annotations to the drawing.
 ![Annotations](./screenshots/annotations.png)
 *Screenshot shows dimension annotations on a sample floor plan.*
 
-> **Note:** To add actual screenshots, create a `screenshots` folder in the project root and add your images with the filenames referenced above.
+> **Note:** To add actual screenshots, we created a `screenshots` folder in the project root called screenshots.
 
 ## 🙏 Acknowledgments
 
